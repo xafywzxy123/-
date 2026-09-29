@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>微信</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none}
+html,body{position:fixed;width:100%;height:100%;overscroll-behavior:none;background:#111;overflow:hidden;font-family:-apple-system,"PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif}
+#stage{position:absolute;left:0;top:0;width:1080px;height:2354px;transform-origin:0 0;overflow:hidden;background:#ededed}
+.a{position:absolute}.scr{position:absolute;inset:0;background:#ededed}
+.hdr{position:absolute;left:0;top:0;width:1080px;height:251px;border-bottom:2px solid #dcdcdc}
+.hdr .t{position:absolute;left:0;width:1080px;top:150px;text-align:center;font-size:46px;font-weight:500;color:#111;line-height:74px}
+.row{position:absolute;left:0;width:1080px;height:196px}
+.row .av{position:absolute;left:44px;top:33px;width:130px;height:130px;border-radius:14px;overflow:hidden;display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);gap:4px;padding:6px;background:#dedede}
+.row .av i{display:block;border-radius:3px}
+.row .av.s{display:flex;align-items:center;justify-content:center;font-size:70px;padding:0}
+.row .n{position:absolute;left:208px;top:36px;font-size:44px;color:#111;line-height:70px;width:700px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .p{position:absolute;left:208px;top:98px;font-size:34px;color:#9a9a9a;line-height:66px;width:760px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .tm{position:absolute;right:45px;top:38px;font-size:32px;color:#b2b2b2;line-height:48px}
+.row .bl{position:absolute;right:44px;top:98px;width:38px;height:38px;opacity:.55}
+.row .dot{position:absolute;left:158px;top:22px;width:28px;height:28px;border-radius:50%;background:#fa5151}
+.row .ln{position:absolute;left:208px;right:0;bottom:0;height:2px;background:#dcdcdc}
+#list{position:absolute;left:0;top:382px;bottom:289px;width:1080px;overflow-y:auto;scrollbar-width:none}
+#list::-webkit-scrollbar{display:none}
+.tab{position:absolute;left:0;bottom:0;width:1080px;height:154px;background:#f7f7f7;border-top:2px solid #e0e0e0;display:flex}
+.tab div{flex:1;text-align:center;font-size:34px;color:#111;padding-top:88px;position:relative}
+.tab div svg{position:absolute;left:50%;top:18px;margin-left:-32px}
+.tab .on{color:#07c160}
+#panel{position:absolute;inset:0;transform:translateY(-100%);background:linear-gradient(160deg,#34314a,#3e3a56 45%,#4b4767);color:#fff;transition:transform .35s ease;z-index:5;overflow:hidden}
+#panel{touch-action:none}#panel.drag{transition:none}
+#panel .bl1{position:absolute;left:600px;top:20px;width:500px;height:300px;border-radius:50%;background:rgba(255,255,255,.05);filter:blur(60px)}
+#panel .bl2{position:absolute;left:560px;top:1700px;width:300px;height:400px;border-radius:50%;background:rgba(255,255,255,.07);filter:blur(60px)}
+.ph{position:absolute;left:0;width:1080px;text-align:center;top:150px;font-size:46px;font-weight:500;line-height:74px}
+.sb{position:absolute;left:66px;top:296px;width:950px;height:108px;border-radius:18px;background:rgba(255,255,255,.1);font-size:38px;color:rgba(255,255,255,.55);display:flex;align-items:center;justify-content:center;gap:20px}
+.lb{position:absolute;left:88px;font-size:38px;color:rgba(255,255,255,.6)}
+.lm{position:absolute;right:90px;font-size:38px;color:rgba(255,255,255,.6)}
+.mp{position:absolute;width:244px;text-align:center;font-size:38px;line-height:50px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mp b{display:flex;width:130px;height:130px;border-radius:50%;margin:0 auto 24px;align-items:center;justify-content:center;font-size:56px;font-weight:700;color:#fff;overflow:hidden}
+.pbar{position:absolute;left:0;bottom:0;width:1080px;height:197px;background:rgba(150,140,185,.55);border-radius:36px 36px 0 0}
+.pbar .ph{top:50px}
+.fwd{position:absolute;left:672px;bottom:190px;width:344px;height:106px;border-radius:53px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.35);font-size:42px;display:flex;align-items:center;justify-content:center;gap:18px}
+/* mini program */
+#mp{position:absolute;inset:0;background:#f5f6fa;z-index:10;transform:translateX(100%);transition:transform .3s ease}
+#mp.show{transform:none}
+.mhd{position:absolute;left:0;top:0;width:1080px;height:250px;background:#3d84ec;z-index:3}
+.mhd .t{position:absolute;left:0;width:1080px;top:150px;text-align:center;font-size:46px;color:#fff;line-height:74px}
+.cap{position:absolute;left:767px;top:138px;width:287px;height:95px;border-radius:48px;background:#2f68be;display:flex;align-items:center}
+.cap div{flex:1;height:100%;display:flex;align-items:center;justify-content:center;gap:10px}
+.cap div+div{border-left:2px solid rgba(255,255,255,.2)}
+.pg{position:absolute;left:0;top:0;right:0;bottom:0;display:none}
+.pg.on{display:block}
+.body{position:absolute;left:0;top:250px;bottom:169px;width:1080px;overflow-y:auto;background:#f5f6fa;scrollbar-width:none}
+.body::-webkit-scrollbar{display:none}
+.card{position:absolute;left:35px;width:1010px;background:#fff;border-radius:30px}
+.card h3{position:absolute;left:37px;top:40px;font-size:46px;color:#222;font-weight:700;line-height:60px;padding-left:0}
+.card h3:before{content:"";position:absolute;left:-37px;top:6px;width:11px;height:48px;background:#3d84ec}
+.card .more{position:absolute;right:104px;top:44px;font-size:34px;color:#555;line-height:52px}
+.card .chev{position:absolute;right:58px;top:52px}
+.it{position:absolute;width:253px;text-align:center;font-size:38px;color:#666;line-height:50px;white-space:nowrap}
+.it b{display:flex;width:116px;height:116px;border-radius:28px;margin:0 auto 18px;align-items:center;justify-content:center}
+.mtab{position:absolute;left:0;bottom:0;width:1080px;height:169px;background:#fff;border-top:2px solid #e6e6e6;display:flex;z-index:3}
+.mtab div{flex:1;text-align:center;font-size:32px;color:#8a8a8a;padding-top:100px;position:relative}
+.mtab div svg{position:absolute;left:50%;top:26px;margin-left:-32px}
+.mtab .on{color:#3d84ec}
+#mascot{position:absolute;left:715px;bottom:304px;width:310px;z-index:4}
+#cbtn{position:absolute;left:992px;bottom:528px;width:74px;height:74px;border-radius:50%;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.2);z-index:4;display:flex;align-items:center;justify-content:center}
+.wh{background:#fff}
+.sub .mhd{background:#fff;border-bottom:2px solid #e5e5e5}
+.sub .mhd .t{color:#111}
+.fld{position:absolute;left:0;width:1080px;height:150px;background:#fff;border-bottom:2px solid #eee;font-size:42px;line-height:150px;padding:0 48px;color:#222}
+.fld span{position:absolute;right:100px;color:#999}
+.btn{position:absolute;left:48px;top:1000px;width:984px;height:130px;border-radius:20px;background:#3d84ec;color:#fff;font-size:46px;text-align:center;line-height:130px}
+#toast{position:absolute;left:50%;top:1000px;transform:translateX(-50%);background:rgba(40,40,40,.88);color:#fff;font-size:40px;padding:34px 60px;border-radius:24px;z-index:30;opacity:0;pointer-events:none;transition:opacity .3s;white-space:nowrap}
+</style></head><body>
+<div id="stage">
+
+<!-- WeChat -->
+<div class="scr" id="wx">
+  <div class="hdr"><div class="t">微信</div>
+    <svg class="a" style="left:868px;top:158px" width="56" height="56" viewBox="0 0 56 56" fill="none" stroke="#111" stroke-width="4.5" stroke-linecap="round"><circle cx="26" cy="26" r="20"/><path d="M41 41l11 11"/></svg>
+    <svg class="a" style="left:975px;top:156px" width="58" height="58" viewBox="0 0 58 58" fill="none" stroke="#111" stroke-width="4"><circle cx="29" cy="29" r="26"/><path d="M29 16v26M16 29h26" stroke-linecap="round"/></svg>
+  </div>
+  <div id="tabhint" class="a" style="left:0;top:252px;width:1080px;height:130px;border-bottom:2px solid #dcdcdc">
+    <svg class="a" style="left:80px;top:42px" width="56" height="44" viewBox="0 0 56 44" fill="none" stroke="#333" stroke-width="3.5"><rect x="2" y="2" width="52" height="40" rx="4"/><path d="M22 34h12"/></svg>
+    <div class="a" style="left:208px;top:32px;font-size:38px;color:#555;line-height:66px">平板微信已登录</div>
+  </div>
+  <div id="list"></div>
+  <div class="a" style="left:0;bottom:154px;width:1080px;height:133px;background:#ededed;border-top:2px solid #dcdcdc">
+    <svg class="a" style="left:80px;top:46px" width="56" height="40" viewBox="0 0 56 40" stroke="#555" stroke-width="4" stroke-linecap="round"><path d="M2 4h6M16 4h38M2 20h6M16 20h38M2 36h6M16 36h38"/></svg>
+    <div class="a" style="left:208px;top:32px;font-size:38px;color:#555;line-height:66px">折叠置顶聊天</div>
+    <svg class="a" style="left:984px;top:52px" width="40" height="28" viewBox="0 0 40 28" fill="none" stroke="#666" stroke-width="4"><path d="M3 24L20 6l17 18"/></svg>
+  </div>
+  <div class="tab" id="wtab"></div>
+
+  <!-- pull-down panel -->
+  <div id="panel">
+    <div class="bl1"></div><div class="bl2"></div>
+    <div class="ph">最近</div>
+    <div class="sb"><svg width="50" height="50" viewBox="0 0 56 56" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".7"><circle cx="24" cy="24" r="18"/><path d="M38 38l12 12"/></svg>搜索小程序</div>
+    <div class="lb" style="top:490px">最近使用的小程序</div><div class="lm" style="top:490px">更多 ›</div>
+    <div class="lb" style="top:1123px">常用的小程序</div><div class="lm" style="top:1123px">我的小程序 ›</div>
+    <div id="grid"></div>
+    <div class="fwd">转发截图 ➦</div>
+    <div class="pbar" id="pbar"><div class="ph">微信</div>
+      <svg class="a" style="left:868px;top:60px" width="56" height="56" viewBox="0 0 56 56" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round"><circle cx="26" cy="26" r="20"/><path d="M41 41l11 11"/></svg>
+      <svg class="a" style="left:975px;top:58px" width="58" height="58" viewBox="0 0 58 58" fill="none" stroke="#fff" stroke-width="4"><circle cx="29" cy="29" r="26"/><path d="M29 16v26M16 29h26" stroke-linecap="round"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- Mini program: 我在校园 -->
+<div id="mp">
+  <div class="mhd"><div class="t" id="mt">我在校园</div>
+    <div class="cap"><div><i style="width:14px;height:14px;border-radius:50%;background:#fff"></i><i style="width:20px;height:20px;border-radius:50%;background:#fff"></i><i style="width:14px;height:14px;border-radius:50%;background:#fff"></i></div>
+    <div id="capx"><svg width="56" height="56" viewBox="0 0 56 56" fill="none" stroke="#fff"><circle cx="28" cy="28" r="24" stroke-width="5"/><circle cx="28" cy="28" r="9" fill="#fff" stroke="none"/></svg></div></div>
+  </div>
+
+  <!-- 工作台 -->
+  <div class="pg on" id="p0"><div class="body">
+    <div class="a" style="left:40px;top:60px;display:flex;align-items:center;gap:26px"><svg width="78" height="66" viewBox="0 0 78 66"><ellipse cx="39" cy="30" rx="34" ry="26" fill="#fff" stroke="#2856a8" stroke-width="4"/><path d="M5 30h68M39 4v52M14 14c14 8 36 8 50 0M14 46c14-8 36-8 50 0" stroke="#2856a8" stroke-width="3" fill="none"/><path d="M8 52h62" stroke="#2856a8" stroke-width="5"/></svg><span style="font-size:44px;font-weight:700;color:#222">中午好,同学</span></div>
+    <div class="a" style="left:35px;top:167px;width:1010px;height:432px;border-radius:24px;overflow:hidden;background:linear-gradient(#2c7be0,#6aaef0 55%,#a9d3f5)">
+      <div class="a" style="left:0;top:210px;width:1010px;height:222px;background:linear-gradient(#a49a86,#c9bfa8)"></div>
+      <div class="a" style="left:330px;top:205px;width:330px;height:150px;background:#d9532c"></div>
+      <div class="a" style="left:415px;top:230px;width:180px;height:120px;background:#3d5a7a"></div>
+      <div class="a" style="left:640px;top:245px;width:220px;height:100px;background:#d9532c"></div>
+      <div class="a" style="left:0;top:160px;width:170px;height:200px;background:#2d6b34;border-radius:50% 50% 0 0"></div>
+      <div class="a" style="left:880px;top:180px;width:130px;height:170px;background:#3d7d3a;border-radius:50% 50% 0 0"></div>
+      <div class="a" style="left:0;top:340px;width:1010px;height:92px;background:#c9c3b4"></div>
+      <div class="a" style="left:0;top:36px;width:1010px;text-align:center;color:#fff;font-size:26px;text-align:left;padding-left:34px;font-family:serif">西安翻译学院 XI'AN FANYI UNIVERSITY</div>
+      <div class="a" style="left:0;top:92px;width:1010px;text-align:center;color:#f4e3a8;font-size:56px;font-weight:800;text-shadow:0 4px 8px rgba(0,0,0,.45)">“一站式”</div>
+      <div class="a" style="left:0;top:150px;width:1010px;text-align:center;color:#f4e3a8;font-size:56px;font-weight:800;text-shadow:0 4px 8px rgba(0,0,0,.45)">学生社区综合管理平台</div>
+    </div>
+    <div class="card" style="top:628px;height:395px"><h3>审批助手</h3><div class="more">更多</div><svg class="chev" width="24" height="40" viewBox="0 0 24 40" fill="none" stroke="#333" stroke-width="4"><path d="M4 4l16 16L4 36"/></svg>
+      <div class="it" style="left:34px;top:150px"><b style="background:#74b4f7"></b>学校用印申请</div>
+      <div class="it" style="left:287px;top:150px"><b style="background:#74b4f7"></b>学生寝室信息</div></div>
+    <div class="card" style="top:1052px;height:623px"><h3>学生日常管理</h3><div class="more">更多</div><svg class="chev" width="24" height="40" viewBox="0 0 24 40" fill="none" stroke="#333" stroke-width="4"><path d="M4 4l16 16L4 36"/></svg>
+      <div class="it" id="leave" style="left:34px;top:150px;color:#666"><b style="background:#ffa30f"></b>请假申请</div>
+      <div class="it" style="left:287px;top:150px"><b style="background:#ffa30f"></b>课程签到</div>
+      <div class="it" style="left:541px;top:150px"><b style="background:#3d9bf0"></b>通知</div>
+      <div class="it" style="left:794px;top:150px"><b style="background:#0fd07d"></b>问卷填写</div>
+      <div class="it" style="left:34px;top:378px"><b style="background:#3d9bf0"></b>签到消息</div>
+      <div class="it" style="left:287px;top:378px"><b style="background:#3d9bf0"></b>谈心谈话</div>
+      <div class="it" style="left:541px;top:378px"><b style="background:#3d9bf0"></b>班会例会</div>
+      <div class="it" style="left:794px;top:378px"><b style="background:#7ccf4a"></b>值班查寝</div></div>
+    <div class="card" style="top:1705px;height:520px"><h3>学生资助管理</h3><div class="more">更多</div><svg class="chev" width="24" height="40" viewBox="0 0 24 40" fill="none" stroke="#333" stroke-width="4"><path d="M4 4l16 16L4 36"/></svg>
+      <div class="it" style="left:34px;top:150px"><b style="background:#3d9bf0"></b>资助申请</div>
+      <div class="it" style="left:287px;top:150px"><b style="background:#7ccf4a"></b>助学贷款</div>
+      <div class="it" style="left:541px;top:150px"><b style="background:#2fc4c0"></b>奖学金</div>
+      <div class="it" style="left:794px;top:150px"><b style="background:#74b4f7"></b>困难认定</div></div>
+  </div></div>
+
+  <!-- 通讯录 -->
+  <div class="pg" id="p1"><div class="body"><div class="a" style="left:0;top:700px;width:1080px;text-align:center;font-size:40px;color:#aaa">暂无联系人</div></div></div>
+
+  <!-- 我的 -->
+  <div class="pg" id="p2"><div class="body wh" style="top:250px">
+    <div class="a" style="left:0;top:-250px;width:1080px;height:708px;background:linear-gradient(180deg,#3d84ec,#3d84ec 40%,#4b90ee)">
+      <div class="a" style="left:0;top:660px;width:1080px;height:48px"></div>
+      <div class="a" style="left:852px;top:296px;width:50px;height:50px;background:rgba(255,255,255,.75);border-radius:6px"></div>
+      <div class="a" style="left:916px;top:296px;font-size:38px;color:#fff;line-height:50px">学生</div>
+      <svg class="a" style="left:998px;top:304px" width="36" height="36" viewBox="0 0 36 36" fill="none" stroke="#fff" stroke-width="5"><path d="M10 3v28M4 24l6 8 6-8M26 33V5M20 12l6-8 6 8"/></svg>
+      <div class="a" style="left:46px;top:406px;width:168px;height:168px;border-radius:50%;background:#d8dde6;overflow:hidden"><svg width="168" height="168" viewBox="0 0 168 168"><circle cx="84" cy="66" r="34" fill="#f1c9a5"/><path d="M48 62c0-30 72-30 72 0 0-14-14-24-36-24s-36 10-36 24z" fill="#3a2a1e"/><path d="M14 168c8-44 40-52 70-52s62 8 70 52z" fill="#3a3a3f"/></svg></div>
+      <div class="a" style="left:245px;top:400px;font-size:62px;font-weight:800;color:#fff;line-height:80px">张凯歌</div>
+      <div class="a" style="left:245px;top:500px;font-size:40px;color:#fff;line-height:52px">西安翻译学院 / 英文学院</div>
+    </div>
+    <div class="a" style="left:0;top:208px;width:1080px;height:400px">
+      <div class="a" style="left:48px;top:0;width:75px;height:75px;border-radius:16px;background:#12c15c"></div><div class="a" style="left:153px;top:0;font-size:42px;font-weight:700;color:#222;line-height:75px">个人信息</div>
+      <div class="a" style="left:48px;top:135px;width:75px;height:75px;border-radius:16px;background:#3d84ec"></div><div class="a" style="left:153px;top:135px;font-size:42px;font-weight:700;color:#222;line-height:75px">修改默认角色</div>
+      <div class="a" style="left:48px;top:270px;width:75px;height:75px;border-radius:16px;background:#2fb8f5"></div><div class="a" style="left:153px;top:270px;font-size:42px;font-weight:700;color:#222;line-height:75px">设置</div>
+      <svg class="a" style="left:996px;top:18px" width="24" height="40" viewBox="0 0 24 40" fill="none" stroke="#aaa" stroke-width="3"><path d="M4 4l16 16L4 36"/></svg>
+      <svg class="a" style="left:996px;top:153px" width="24" height="40" viewBox="0 0 24 40" fill="none" stroke="#aaa" stroke-width="3"><path d="M4 4l16 16L4 36"/></svg>
+      <svg class="a" style="left:996px;top:288px" width="24" height="40" viewBox="0 0 24 40" fill="none" stroke="#aaa" stroke-width="3"><path d="M4 4l16 16L4 36"/></svg>
+    </div>
+  </div></div>
+
+  <!-- 请假审批流程 (embedded) -->
+  <div class="pg" id="p3" style="background:#f4f5f7;overflow:hidden">
+    <iframe id="lf" style="position:absolute;left:0;top:0;width:390px;height:850px;border:0;transform:scale(2.7692);transform-origin:0 0"></iframe>
+    <svg class="a" id="back" style="left:34px;top:56px;z-index:2" width="36" height="58" viewBox="0 0 36 58" fill="none" stroke="#fff" stroke-width="5"><path d="M28 6L8 29l20 23"/></svg>
+    <div class="a" id="capx2" style="left:960px;top:20px;width:110px;height:130px;z-index:2"></div>
+  </div>
+  <script type="text/html" id="leaveTpl"><!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>我在校园 - 请假审批</title>
+<style>
+:root{--bg:#f4f5f7;--card:#fff;--tx:#222;--sub:#555;--ln:#eee;--bl:#3b82f6;--mut:#999;--run:#6556c8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#111;--card:#1e1e1e;--tx:#eee;--sub:#bbb;--ln:#333;--mut:#888}}
+:root[data-theme="dark"]{--bg:#111;--card:#1e1e1e;--tx:#eee;--sub:#bbb;--ln:#333;--mut:#888}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.45 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+#app{max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:78px}
+header{background:var(--bl);color:#fff;text-align:center;font-size:18px;padding:15px 0;position:relative}
+header .cap{position:absolute;right:10px;top:8px;background:rgba(0,0,0,.20);border-radius:18px;padding:3px 11px;font-size:14px;letter-spacing:2px}
+.card{background:var(--card);border-radius:9px;margin:8px 10px 0;padding:2px 15px}
+.row{display:flex;justify-content:space-between;align-items:center;min-height:42px;border-bottom:1px solid var(--ln)}
+.row:last-child{border:0}
+.row b{font-weight:600;text-align:right;font-size:14px}
+.lab{color:var(--sub);font-size:14px}
+.blk{padding:10px 0}
+.blk .lab{margin-bottom:7px}
+.blk b{display:block;font-weight:600;font-size:14px;line-height:1.8}
+.stamp{width:60px;height:60px;border:2px double #a9adb8;border-radius:50%;color:#a9adb8;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;transform:rotate(-18deg);margin:2px 2px 2px 0;position:relative}
+.stamp.running{color:var(--run);border-color:var(--run);box-shadow:inset 0 0 0 1px var(--run);letter-spacing:0}
+.stamp.running:before,.stamp.running:after{content:"✦  ✦";position:absolute;font-size:7px;letter-spacing:3px}
+.stamp.running:before{top:5px}
+.stamp.running:after{bottom:5px}
+.stamp.ok{color:#22a06b;border-color:#22a06b}
+.stamp.rej{color:#e5484d;border-color:#e5484d}
+.stamp.p{color:var(--bl);border-color:var(--bl)}
+.tl{padding:6px 0}
+.node{display:flex;align-items:center;padding:10px 0;position:relative;border-bottom:1px solid var(--ln)}
+.node:last-child{border:0}
+.rail{width:21px;align-self:stretch;position:relative;flex:none}
+.rail:before{content:"";position:absolute;left:5px;top:0;bottom:0;width:2px;background:var(--bl)}
+.rail i{position:absolute;left:1px;top:50%;margin-top:-4px;width:9px;height:9px;border-radius:50%;background:var(--bl)}
+.node:first-child .rail:before{top:50%}
+.node:last-child .rail:before{bottom:50%}
+.av{width:58px;height:58px;border-radius:4px;background:#cfe6ff;flex:none;margin-right:13px;overflow:hidden}
+.av.r{border-radius:50%}
+.av img{width:100%;height:100%;object-fit:cover;display:block}
+.inf{flex:1;min-width:0}
+.inf .nm{font-weight:600;font-size:14px}
+.inf .tm{color:var(--bl);font-weight:600;font-size:13px}
+.inf .cm{font-weight:600;margin-top:4px;display:flex;gap:4px;align-items:center;font-size:13px}
+.inf .cm.rejc,.inf .tm.rejc{color:#e5484d}
+.inf .cm svg{width:20px;height:20px;flex:none}
+.badge{width:56px;height:56px;flex:none;display:flex;align-items:center;justify-content:center}
+.badge span{width:56px;height:56px;border-radius:50%;background:var(--bl);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;transform:scale(.78)}
+.badge span.wait{background:#c9ccd3}
+.badge span.no{background:#e5484d}
+.dl{display:block;width:calc(100% - 20px);margin:13px 10px 0;background:var(--bl);color:#fff;border:0;border-radius:8px;padding:13px;font-size:15px}
+.demo{margin:9px 10px;padding:11px 14px}
+.demo h4{margin:0 0 7px;font-size:13px;color:var(--sub)}
+.demo input,.form input,.form select,.form textarea{width:100%;padding:8px;border:1px solid var(--ln);border-radius:6px;background:var(--bg);color:var(--tx);font:inherit}
+.btns{display:flex;gap:7px;margin-top:7px;flex-wrap:wrap}
+.btn{flex:1;min-width:78px;padding:9px;border-radius:6px;border:1px solid var(--bl);background:transparent;color:var(--bl);font:inherit}
+.btn.pri{background:var(--bl);color:#fff}
+.btn.red{border-color:#e5484d;color:#e5484d}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--ln);display:flex;max-width:480px;margin:0 auto;padding-bottom:env(safe-area-inset-bottom,0px);z-index:6}
+nav div{flex:1;text-align:center;padding:7px 0;color:var(--sub);font-size:13px}
+nav div.on{color:var(--bl)}
+nav svg{display:block;margin:0 auto 1px}
+.empty{text-align:center;color:var(--mut);padding:55px 0}
+#sheet{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:9}
+#sheet .p{position:absolute;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:var(--card);border-radius:14px 14px 0 0;max-height:88vh;overflow:auto;padding:14px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.form label{display:block;font-size:13px;color:var(--sub);margin:9px 0 3px}
+.form h3{font-size:17px}
+.section-title{margin:14px 0 4px;padding-top:9px;border-top:1px solid var(--ln);font-weight:600}
+.filebox{border:1px dashed #b9bec8;border-radius:7px;padding:9px;background:var(--bg);margin-top:4px}
+.filebox input[type=file]{padding:4px;border:0;background:transparent}
+.preview{display:flex;gap:7px;flex-wrap:wrap;margin-top:7px}
+.preview img{width:62px;height:62px;object-fit:cover;border-radius:6px;border:1px solid var(--ln)}
+.avatar-preview{width:70px;height:70px;border-radius:50%;object-fit:cover;display:block;margin:6px 0;border:1px solid var(--ln)}
+.fab{position:fixed;right:12px;bottom:72px;width:46px;height:46px;border-radius:50%;background:var(--bl);color:#fff;border:0;font-size:13px;box-shadow:0 2px 8px rgba(0,0,0,.3);z-index:5}
+.small-note{font-size:12px;color:var(--mut);margin-top:4px}
+.reason-block b{font-size:14px;line-height:1.9;font-weight:600}
+.location-block b{font-size:14px;line-height:1.8;text-align:left}
+.card>.row .lab{font-size:14px}
+.card>.row b{font-size:14px}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="sheet"><div class="p"><div class="form" id="form"></div></div></div>
+<script>
+const KEY="leave_flow_v2";
+const pad=n=>String(n).padStart(2,"0");
+const now=()=>{const d=new Date();return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`};
+const defaultState=()=>({status:"running",type:"事假",start:"2026-04-30 07:00",end:"2026-04-30 12:00",phone:"13800000000",loc:"陕西省西安市新城区解放门街道西七路",
+reason:"尊敬的老师您好，我因家中有事，需提前请假回家。在外期间保证电话畅通，一切人身安全由自身负责。望老师批准",
+out:"否",attach:"未上传",attachments:[],avatar:"",student:"张凯歌",counselor:"党建雄",dean:"曾维民",t0:"2026-04-29 17:10",
+c1:{time:"2026-04-29 17:11",text:"同意,情况属实,注意安全"},c2:{time:"2026-04-29 22:26",text:"同意审批"},cancel:{by:"张凯歌",time:"2026-05-09 12:58"},tab:0,rejAt:0});
+let S;try{S=JSON.parse(localStorage.getItem(KEY))||defaultState()}catch(e){S=defaultState()}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const stamp={running:["进行中","running"],p1:["审批中","p"],p2:["审批中","p"],ok:["已通过","ok"],rej:["已驳回","rej"],void:["已销假",""]};
+const face=c=>`<svg viewBox="0 0 74 74"><rect width="74" height="74" fill="${c}"/><circle cx="37" cy="30" r="14" fill="#ffe0c2"/><path d="M22 28q0-16 15-16t15 16q-6-8-15-8t-15 8z" fill="#222"/><circle cx="32" cy="32" r="2" fill="#222"/><circle cx="42" cy="32" r="2" fill="#222"/><path d="M8 74q0-22 29-22t29 22z" fill="#5aa9ff"/></svg>`;
+const spk=`<svg width="20" height="20" viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9z" fill="#3b82f6"/><path d="M15 9a4 4 0 010 6" stroke="#3b82f6" fill="none" stroke-width="2"/></svg>`;
+const chk=`<svg width="36" height="36" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10" stroke="#fff" stroke-width="2.4" fill="none"/></svg>`;
+const clk=`<svg width="36" height="36" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="#fff" stroke-width="2" fill="none"/><path d="M12 7v5l3 2" stroke="#fff" stroke-width="2" fill="none"/></svg>`;
+const xx=`<svg width="36" height="36" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="#fff" stroke-width="2.4"/></svg>`;
+function avatarHtml(){return S.avatar?`<img src="${S.avatar}" alt="学生头像">`:face("#cfd8e3")}
+function node(av,name,time,cm,badge,cls=""){return `<div class="node"><div class="rail"><i></i></div><div class="av ${av[1]}">${av[0]}</div><div class="inf"><div class="nm">${esc(name)}</div><div class="tm ${cls}">${esc(time)}</div>${cm?`<div class="cm ${cls}">${spk}<span>${esc(cm)}</span></div>`:""}</div><div class="badge">${badge}</div></div>`}
+function render(){
+const st=S.status;const [sn,sc]=stamp[st]||stamp.running;
+const passed1=["p2","ok","void","running"].includes(st)||(st==="rej"&&S.rejAt===2);
+const passed2=["ok","void","running"].includes(st);
+let tl=node([avatarHtml(),""],S.student+"(学生)","发起审批: "+S.t0,"",`<span>我</span>`);
+if(passed1){tl+=node([face("#bfe0ff"),"r"],S.counselor+"(辅导员)","审批通过 "+S.c1.time,S.c1.text,`<span>${chk}</span>`)}
+else if(st==="rej"&&S.rejAt===1){tl+=node([face("#bfe0ff"),"r"],S.counselor+"(辅导员)","审批驳回 "+S.c1.time,S.c1.text,`<span class="no">${xx}</span>`,"rejc")}
+else{tl+=node([face("#bfe0ff"),"r"],S.counselor+"(辅导员)","待审批","",`<span class="wait">${clk}</span>`)}
+if(passed2){tl+=node([face("#bfe0ff"),"r"],S.dean+"(院级)","审批通过 "+S.c2.time,S.c2.text,`<span>${chk}</span>`)}
+else if(st==="rej"&&S.rejAt===2){tl+=node([face("#bfe0ff"),"r"],S.dean+"(院级)","审批驳回 "+S.c2.time,S.c2.text,`<span class="no">${xx}</span>`,"rejc")}
+else if(st!=="rej"){tl+=node([face("#bfe0ff"),"r"],S.dean+"(院级)","待审批","",`<span class="wait">${clk}</span>`)}
+let act="";
+const ci=`<input id="cm" placeholder="审批意见（可选）">`;
+if(st==="p1"){act=`<h4>演示操作 · 当前待 ${esc(S.counselor)}(辅导员) 审批</h4>${ci}<div class="btns"><button class="btn pri" onclick="act('a1')">同意</button><button class="btn red" onclick="act('r1')">驳回</button></div>`}
+if(st==="p2"){act=`<h4>演示操作 · 当前待 ${esc(S.dean)}(院级) 审批</h4>${ci}<div class="btns"><button class="btn pri" onclick="act('a2')">同意</button><button class="btn red" onclick="act('r2')">驳回</button></div>`}
+if(st==="ok"||st==="running"){act=`<h4>演示操作 · 审批已通过，当前请假进行中</h4><div class="btns"><button class="btn pri" onclick="act('cancel')">销假</button></div>`}
+act+=`<div class="btns"><button class="btn" onclick="act('new')">重新发起申请</button><button class="btn" onclick="act('reset')">恢复示例</button></div>`;
+let main;
+if(S.tab===0){
+const attachmentText=S.attachments?.length?`已上传 ${S.attachments.length} 张图片`:(S.attach||"未上传");
+const attachmentPreview=(S.attachments||[]).map(x=>`<img src="${x}" alt="附件">`).join("");
+main=`<div class="card"><div class="row" style="min-height:90px"><span class="lab">当前状态</span><div class="stamp ${sc}">${sn}</div></div>
+<div class="row"><span class="lab">请假类型</span><b>${esc(S.type)}</b></div>
+<div class="row"><span class="lab">开始时间</span><b>${esc(S.start)}</b></div>
+<div class="row"><span class="lab">结束时间</span><b>${esc(S.end)}</b></div>
+<div class="row"><span class="lab">紧急联系人电话</span><b>${esc(S.phone)}</b></div>
+<div class="blk location-block"><div class="lab">当前位置</div><b>${esc(S.loc)}</b></div></div>
+<div class="card"><div class="blk reason-block"><div class="lab">请假事由</div><b>${esc(S.reason)}</b></div></div>
+<div class="card"><div class="row"><span class="lab">是否出校</span><span style="font-size:14px;font-weight:600">${esc(S.out)}</span></div></div>
+<div class="card"><div class="blk"><div style="font-size:16px">其他信息</div><b style="font-size:16px;margin-top:7px">1.附件上传</b><div style="color:var(--mut);padding:5px 0 8px 28px;font-size:14px">${esc(attachmentText)}</div>${attachmentPreview?`<div class="preview" style="padding-left:28px">${attachmentPreview}</div>`:""}</div></div>
+${st==="void"?`<div class="card"><div class="blk"><div class="lab">销假详情</div><b style="font-size:17px">销假人: ${esc(S.cancel.by)}<br>销假时间: ${esc(S.cancel.time)}</b></div></div>`:""}
+<div class="card"><div class="blk" style="padding-bottom:0"><div class="lab">请假审批信息</div></div><div class="tl">${tl}</div></div>
+<button class="dl" onclick="dl()">下载假条</button>
+<div class="card demo">${act}</div>`;
+}else{main=`<div class="empty">${S.tab===1?"暂无延期信息":"暂无行程单"}</div>`}
+const ic=d=>`<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="4"/>${d}</svg>`;
+document.getElementById("app").innerHTML=`<header>我在校园<span class="cap">•••　◎</span></header>${main}
+<button class="fab" onclick="openForm()">编辑</button>
+<nav>${["请假信息","延期信息","行程单"].map((n,i)=>`<div class="${S.tab===i?"on":""}" onclick="S.tab=${i};save();render()">${ic(["<path d='M8 9h8M8 13h5'/>","<path d='M12 7v5l3 2'/>","<path d='M8 10h8M8 14h4'/>"][i])}${n}</div>`).join("")}</nav>`;
+}
+function act(a){const c=(document.getElementById("cm")||{}).value||"";
+if(a==="a1"){S.status="p2";S.c1={time:now(),text:c||"同意,情况属实,注意安全"}}
+if(a==="r1"){S.status="rej";S.rejAt=1;S.c1={time:now(),text:c||"不同意"}}
+if(a==="a2"){S.status="running";S.c2={time:now(),text:c||"同意审批"}}
+if(a==="r2"){S.status="rej";S.rejAt=2;S.c2={time:now(),text:c||"不同意"}}
+if(a==="cancel"){S.status="void";S.cancel={by:S.student,time:now()}}
+if(a==="new"){S.status="p1";S.t0=now();S.rejAt=0}
+if(a==="reset"){S=defaultState()}
+save();render()}
+function fileToDataURL(file,maxSize=1000,quality=.82){
+return new Promise((resolve,reject)=>{
+if(!file){reject(new Error("没有文件"));return}
+const reader=new FileReader();
+reader.onload=e=>{const img=new Image();
+img.onload=()=>{let w=img.width;let h=img.height;
+const scale=Math.min(1,maxSize/Math.max(w,h));
+w=Math.max(1,Math.round(w*scale));h=Math.max(1,Math.round(h*scale));
+const c=document.createElement("canvas");c.width=w;c.height=h;
+c.getContext("2d").drawImage(img,0,0,w,h);
+resolve(c.toDataURL("image/jpeg",quality))};
+img.onerror=reject;img.src=e.target.result};
+reader.onerror=reject;reader.readAsDataURL(file)})}
+const F=[["type","请假类型","sel",["事假","病假","公假","其他"]],["start","开始时间"],["end","结束时间"],["phone","紧急联系人电话"],["loc","当前位置"],["reason","请假事由","ta"],["out","是否出校","sel",["是","否"]],["attach","附件上传显示文字"],["student","学生姓名"],["counselor","辅导员姓名"],["dean","院级审批人姓名"],["t0","发起审批时间"]];
+function openForm(){
+document.getElementById("form").innerHTML=`<h3 style="margin:0">自定义内容</h3>
+${F.map(([k,l,t,o])=>`<label>${l}</label>`+(t==="sel"?`<select id="f_${k}">${o.map(x=>`<option ${S[k]===x?"selected":""}>${x}</option>`).join("")}</select>`:t==="ta"?`<textarea id="f_${k}" rows="3">${esc(S[k])}</textarea>`:`<input id="f_${k}" value="${esc(S[k])}">`)).join("")}
+<div class="section-title">学生头像</div>
+${S.avatar?`<img id="avatarPreview" class="avatar-preview" src="${S.avatar}" alt="头像预览">`:`<div class="small-note">当前未设置头像，将显示默认头像</div>`}
+<div class="filebox"><input id="avatarFile" type="file" accept="image/*"><div class="small-note">点击即可从手机相册选择学生头像</div></div>
+<div class="section-title">附件图片</div>
+<div class="filebox"><input id="attachFiles" type="file" accept="image/*" multiple><div class="small-note">可一次选择多张手机相册图片，保存后显示在“附件上传”区域</div></div>
+<div id="attachPreview" class="preview">${(S.attachments||[]).map(x=>`<img src="${x}" alt="附件预览">`).join("")}</div>
+<div class="section-title">审批时间（可编辑）</div>
+<label>辅导员审批通过时间</label><input id="f_c1time" value="${esc(S.c1.time)}" placeholder="例如：2026-04-29 17:11">
+<label>院级审批通过时间</label><input id="f_c2time" value="${esc(S.c2.time)}" placeholder="例如：2026-04-29 22:26">
+<label>辅导员审批意见</label><input id="f_c1text" value="${esc(S.c1.text)}">
+<label>院级审批意见</label><input id="f_c2text" value="${esc(S.c2.text)}">
+<label>状态（直接指定）</label>
+<select id="f_status">${Object.entries(stamp).map(([k,v])=>`<option value="${k}" ${S.status===k?"selected":""}>${v[0]}${k==="p1"?"（待辅导员）":k==="p2"?"（待院级）":""}</option>`).join("")}</select>
+<div class="btns"><button class="btn" onclick="closeForm()">取消</button><button class="btn pri" onclick="applyForm()">保存</button></div>`;
+document.getElementById("avatarFile").addEventListener("change",async e=>{
+const file=e.target.files[0];if(!file)return;
+try{S._pendingAvatar=await fileToDataURL(file,500,.86);
+const box=document.getElementById("avatarPreview");
+if(box){box.src=S._pendingAvatar}else{
+const img=document.createElement("img");img.id="avatarPreview";img.className="avatar-preview";img.src=S._pendingAvatar;img.alt="头像预览";
+e.target.parentElement.parentElement.insertBefore(img,e.target.parentElement)}
+}catch(err){alert("头像读取失败，请重新选择图片")}});
+document.getElementById("attachFiles").addEventListener("change",async e=>{
+const files=[...e.target.files];if(!files.length)return;
+try{const arr=[];for(const file of files){arr.push(await fileToDataURL(file,1100,.78))}
+S._pendingAttachments=[...(S.attachments||[]),...arr];
+document.getElementById("attachPreview").innerHTML=S._pendingAttachments.map(x=>`<img src="${x}" alt="附件预览">`).join("");
+}catch(err){alert("附件读取失败，请重新选择图片")}});
+document.getElementById("sheet").style.display="block"}
+function closeForm(){document.getElementById("sheet").style.display="none"}
+function applyForm(){
+F.forEach(([k])=>S[k]=document.getElementById("f_"+k).value);
+const ns=document.getElementById("f_status").value;
+S.c1.time=document.getElementById("f_c1time").value||S.c1.time;
+S.c2.time=document.getElementById("f_c2time").value||S.c2.time;
+S.c1.text=document.getElementById("f_c1text").value;
+S.c2.text=document.getElementById("f_c2text").value;
+if(S._pendingAvatar){S.avatar=S._pendingAvatar;delete S._pendingAvatar}
+if(S._pendingAttachments){S.attachments=S._pendingAttachments;S.attach=S.attachments.length?`已上传 ${S.attachments.length} 张图片`:"未上传";delete S._pendingAttachments}
+S.status=ns;
+if(ns==="rej"&&!S.rejAt)S.rejAt=1;
+if(ns!=="rej")S.rejAt=0;
+S.cancel=S.cancel||{by:S.student,time:now()};
+S.cancel.by=S.student;
+save();closeForm();render()}
+function dl(){
+const t=`请假条
+姓名：${S.student}
+请假类型：${S.type}
+开始时间：${S.start}
+结束时间：${S.end}
+紧急联系人电话：${S.phone}
+当前位置：${S.loc}
+请假事由：${S.reason}
+是否出校：${S.out}
+状态：${stamp[S.status]?.[0]||"进行中"}
+审批：${S.counselor}(辅导员) ${S.c1.time} ${S.c1.text}；${S.dean}(院级) ${S.c2.time} ${S.c2.text}
+`;
+const a=document.createElement("a");
+a.href=URL.createObjectURL(new Blob([t],{type:"text/plain;charset=utf-8"}));
+a.download="假条.txt";a.click()}
+render();
+<\/script></body></html>
+</script>
+
+  <div id="mascot"><svg viewBox="0 0 310 300" width="310"><ellipse cx="155" cy="150" rx="118" ry="112" fill="#f9dcc8" stroke="#333" stroke-width="3"/><path d="M40 130C40 30 270 30 270 130z" fill="#2c5aa8" stroke="#333" stroke-width="3"/><ellipse cx="155" cy="105" rx="70" ry="30" fill="#fff" stroke="#333" stroke-width="2"/><text x="155" y="115" text-anchor="middle" font-size="30" font-weight="700" fill="#2c5aa8" font-family="serif">XFU</text><ellipse cx="105" cy="165" rx="30" ry="34" fill="#fff" stroke="#333" stroke-width="3"/><ellipse cx="205" cy="165" rx="30" ry="34" fill="#fff" stroke="#333" stroke-width="3"/><circle cx="108" cy="168" r="20" fill="#2a3f75"/><circle cx="202" cy="168" r="20" fill="#2a3f75"/><circle cx="102" cy="160" r="6" fill="#fff"/><circle cx="196" cy="160" r="6" fill="#fff"/><path d="M135 215q20 8 40 0" stroke="#a66" stroke-width="3" fill="none"/><path d="M60 250c20-40 170-40 190 0v50H60z" fill="#2c5aa8" stroke="#333" stroke-width="3"/><rect x="120" y="255" width="70" height="45" fill="#fff"/></svg></div>
+  <div id="cbtn"><svg width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="#666" stroke-width="3.5"><path d="M6 34l12-12M18 22v9M18 22H9M34 6L22 18M22 18V9M22 18h9"/></svg></div>
+
+  <div class="mtab" id="mtab">
+    <div class="on" data-i="0"><svg width="64" height="64" viewBox="0 0 64 64"><rect x="4" y="8" width="56" height="38" rx="6" fill="currentColor"/><rect x="24" y="50" width="16" height="6" fill="currentColor"/><rect x="16" y="56" width="32" height="5" rx="2" fill="currentColor"/></svg>工作台</div>
+    <div data-i="1"><svg width="64" height="64" viewBox="0 0 64 64"><rect x="10" y="4" width="44" height="56" rx="8" fill="currentColor"/><rect x="20" y="18" width="22" height="6" rx="3" fill="#fff"/><rect x="20" y="30" width="14" height="6" rx="3" fill="#fff"/></svg>通讯录</div>
+    <div data-i="2"><svg width="64" height="64" viewBox="0 0 64 64"><circle cx="32" cy="20" r="14" fill="currentColor"/><path d="M6 60c0-22 12-28 26-28s26 6 26 28z" fill="currentColor"/></svg>我的</div>
+  </div>
+</div>
+<div id="toast"></div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s), st=$('#stage');
+let sc=1,H=2354;
+function fit(){const vv=window.visualViewport,w=vv?vv.width:innerWidth,h=vv?vv.height:innerHeight;
+ sc=Math.min(w/1080,h/1850);H=h/sc;
+ st.style.left=((w-1080*sc)/2)+'px';
+ document.body.style.background=(w/h>0.8)?'#111':'#ededed';
+ st.style.height=H+'px';st.style.transform=`scale(${sc})`;
+ const f=$('#lf');if(f)f.style.height=(H/2.7692)+'px'}
+addEventListener('resize',fit);if(window.visualViewport)visualViewport.addEventListener('resize',fit);fit();
+
+// chat list
+const pal=['#f7a8b8','#9fd6c4','#f6d68c','#a7c5f2','#c9b6ec','#f2b48f','#8fc9e8','#b9dc95','#e8a0d0'];
+const chats=[
+ ['软件工程2026级交流群',70,'13:28','[936条] 小李: 今晚的作业截止时间延到周日了',1,0],
+ ['翻译项目实践II小组',0,'12:04','[175条] 组长: 任务书明天交，大家看一下分工',1,0],
+ ['英文学院2026级通知群',0,'11:55','[629条] 辅导员: 请同学们按时填写问卷',1,0],
+ ['宿舍四人群',0,'11:39','[85条] 阿杰: 晚上去哪吃饭',1,0],
+ ['校园兼职信息群',0,'11:15','[949条] 王老师: 本周兼职岗位已更新',1,0],
+ ['考研交流群',0,'11:14','[546条] 学长: 英语二真题资料已上传',1,0],
+ ['文件传输助手',0,'11:07','[文件] 请假审批流程_优化版_v2-1.html',0,1],
+ ['社团活动中心',0,'11:04','[已读] 周末的招新活动请大家准时到场',0,0],
+ ['食堂拼饭群',0,'10:59','[55条] 阿珍: 二食堂今天有新窗口',1,0]];
+const bell='<svg class="bl" viewBox="0 0 38 38" fill="none" stroke="#333" stroke-width="2.6"><path d="M19 5c-6 0-9 5-9 11v6l-3 4h24l-3-4v-6c0-6-3-11-9-11zM15 31a4 4 0 008 0M4 4l30 30"/></svg>';
+$('#list').innerHTML=chats.map((c,i)=>{
+ let av=c[5]?`<div class="av s" style="background:#4b9df8;color:#fff">📁</div>`:`<div class="av">${Array.from({length:9},(_,k)=>`<i style="background:${pal[(i*3+k*5)%9]}"></i>`).join('')}</div>`;
+ return `<div class="row" style="top:${i*196}px;background:${i==6?'#f7f7f7':'#ededed'}">${av}${c[4]?'<div class="dot"></div>':''}<div class="n">${c[0]}${c[1]?' <span style="color:#07c160">🌲</span>'+c[1]:''}</div><div class="p">${c[3]}</div><div class="tm">${c[2]}</div>${bell}<div class="ln"></div></div>`}).join('')+'<div style="height:'+(9*196)+'px;position:absolute;width:1px"></div>';
+const wt=[['微信','M20 8c-10 0-18 7-18 15 0 5 3 9 7 12l-2 8 9-4c1 0 3 0 4 0 10 0 18-7 18-16S30 8 20 8z',1],['通讯录','M20 8a9 9 0 100 18 9 9 0 000-18zM6 50c0-14 8-20 14-20s14 6 14 20z',0],['发现','M32 4a28 28 0 100 56 28 28 0 000-56z',0],['我','M32 6a12 12 0 100 24 12 12 0 000-24zM8 60c0-18 10-24 24-24s24 6 24 24z',0]];
+$('#wtab').innerHTML=wt.map(t=>`<div class="${t[2]?'on':''}"><svg width="64" height="64" viewBox="0 0 64 64" fill="${t[2]?'currentColor':'none'}" stroke="${t[2]?'none':'#111'}" stroke-width="4"><path d="${t[1]}"/></svg>${t[0]}</div>`).join('');
+
+// panel grid
+const red='<svg width="130" height="130" viewBox="0 0 130 130"><circle cx="65" cy="65" r="65" fill="#e8332f"/><circle cx="65" cy="52" r="26" fill="#fff"/><path d="M28 104c8-24 22-26 37-26s29 2 37 26z" fill="#fff"/><path d="M42 46l23-12 23 12-23 12z" fill="#e8332f"/></svg>';
+const blue='<svg width="130" height="130" viewBox="0 0 130 130"><circle cx="65" cy="65" r="65" fill="#3d86f0"/><circle cx="65" cy="52" r="26" fill="#fff"/><path d="M28 104c8-24 22-26 37-26s29 2 37 26z" fill="#fff"/></svg>';
+const X=(bg,t,fs)=>`<b style="background:${bg};${fs?'font-size:'+fs+'px':''}">${t}</b>`;
+const M=[
+ [173,580,'我在校园',red,1],[417,580,'智尚科技',X('linear-gradient(135deg,#2c7fd0,#f0a020)','◐'),0],[661,580,'北森iTal…',X('#3a5be0','ⓘ'),0],[905,580,'在职研…',X('#6a4a6a','📘',60),0],
+ [173,817,'前程无忧',X('#f26a3a','✋'),0],[417,817,'怪兽充…',X('#fff','<span style="color:#1ec0a0">▮</span>'),0],[661,817,'美团充…',X('#ffd100','<span style="color:#222;font-size:44px">美团</span>'),0],[905,817,'收钱吧',X('#0d1b3d','<span style="color:#f5b300;font-size:84px">收</span>'),0],
+ [173,1213,'乘车码…',X('#fff','<span style="color:#1aa64b;font-size:80px">G</span>'),0],[417,1213,'我在校园',blue,1],[661,1213,'尖尖',X('#0a7aa5','<span style="color:#ffe01a">◡</span>'),0],[905,1213,'我在校园',red,1],
+ [173,1450,'浣熊先生',X('#fff','<span style="color:#2a8cf0">🐱</span>'),0],[417,1450,'唐生出行',X('#ffd700','🚌',60),0],[661,1450,'句号压缩',X('#fff','🖼',60),0],[905,1450,'贪吃蛇…',X('#f5f5fa','<span style="color:#f2554b;font-size:70px">●</span>'),0]];
+$('#grid').innerHTML=M.map(m=>`<div class="mp" data-o="${m[4]}" style="left:${m[0]-122}px;top:${m[1]+0-65+(m[1]>1000?0:0)}px">${m[3].startsWith('<b')?m[3]:'<b style="background:none">'+m[3]+'</b>'}${m[2]}</div>`).join('');
+
+// pull-down (touch + mouse)
+const pn=$('#panel'), lst=$('#list');
+let y0=null,dy=0,open=false;
+function setP(v){pn.style.transform=`translateY(${v}px)`}
+function openP(o){open=o;pn.classList.remove('drag');pn.style.transform=o?'translateY(0)':''}
+function start(y){if($('#mp').classList.contains('show'))return;y0=y;dy=0}
+function move(y,e){if(y0===null)return;dy=(y-y0)/sc;
+  if(!open&&dy>8&&lst.scrollTop<=0){if(e.cancelable)e.preventDefault();pn.classList.add('drag');setP(-H+Math.min(dy*1.4,H))}
+  else if(open&&dy<-8){if(e.cancelable)e.preventDefault();pn.classList.add('drag');setP(Math.max(dy,-H))}}
+function end(){if(y0===null)return;
+  if(!open&&dy>140&&lst.scrollTop<=0)openP(true);else if(open&&dy<-140)openP(false);else openP(open);y0=null}
+st.addEventListener('touchstart',e=>start(e.touches[0].clientY),{passive:true});
+st.addEventListener('touchmove',e=>move(e.touches[0].clientY,e),{passive:false});
+st.addEventListener('touchend',end);st.addEventListener('touchcancel',end);
+st.addEventListener('mousedown',e=>start(e.clientY));
+addEventListener('mousemove',e=>move(e.clientY,e));
+addEventListener('mouseup',end);
+addEventListener('wheel',e=>{if($('#mp').classList.contains('show'))return;if(e.deltaY<-30&&lst.scrollTop<=0&&!open)openP(true);if(e.deltaY>30&&open)openP(false)},{passive:true});
+$('#tabhint').onclick=()=>openP(true);
+$('#pbar').onclick=()=>openP(false);
+
+// open mini program
+function openMP(){$('#mp').classList.add('show');go(0)}
+function closeMP(){$('#mp').classList.remove('show')}
+document.addEventListener('click',e=>{const o=e.target.closest('.mp');if(o&&o.dataset.o==='1'&&Math.abs(dy)<20)openMP()});
+$('#capx').onclick=closeMP;$('#capx2').onclick=closeMP;
+function go(i){document.querySelectorAll('#mp .pg').forEach(p=>p.classList.remove('on'));$('#p'+i).classList.add('on');
+  document.querySelectorAll('#mtab div').forEach((d,k)=>d.classList.toggle('on',k==i));
+  $('#mtab').style.display='flex';$('#mt').textContent='我在校园';
+  const h=$('#mp .mhd');h.style.display=i==3?'none':'block';
+  $('#mascot').style.display=(i==1||i==3)?'none':'block';$('#cbtn').style.display=$('#mascot').style.display}
+document.querySelectorAll('#mtab div').forEach(d=>d.onclick=()=>go(+d.dataset.i));
+$('#leave').onclick=()=>{go(3);$('#mtab').style.display='none';const f=$('#lf');if(!f.srcdoc)f.srcdoc=$('#leaveTpl').textContent.split('<\\/scr'+'ipt>').join('<'+'/scr'+'ipt>')};
+$('#back').onclick=()=>go(0);
+$('#cbtn').onclick=()=>{const m=$('#mascot');const h=m.style.opacity==='0';m.style.opacity=h?1:0;m.style.pointerEvents=h?'':'none'};
+function toast(t){const e=$('#toast');e.textContent=t;e.style.opacity=1;setTimeout(()=>e.style.opacity=0,1800)}
+setTimeout(()=>toast('下拉聊天列表，打开小程序'),400);
+</script>
+</body></html>
